@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <stdbool.h>
+
+
 typedef struct Option {
     char *name;
     int value_count;
@@ -45,7 +48,10 @@ void Arguments_append_option_value(Arguments *arguments, char *value);
 Option *Arguments_get_option(Arguments *arguments, char *name);
 
 // Get value on index `idx` of option with name `name` from `arguments`, return NULL if not found
-char *Argument_get_option_value(Arguments *arguments, char*name, int idx);
+char *Arguments_get_option_value(Arguments *arguments, char*name, int idx);
+
+// Check if `arguments` have option with name `name`
+bool Arguments_has_option(Arguments *arguments, char *name);
 
 // Parse command line arguments and update to the `arguments`
 void Arguments_parse(Arguments *arguments, int argc, char **argv);

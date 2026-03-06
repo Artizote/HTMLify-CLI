@@ -2,6 +2,7 @@
 
 #include <string.h>
 #include <malloc.h>
+#include <stdbool.h>
 #include "argparse.h"
 
 
@@ -73,7 +74,7 @@ Option *Arguments_get_option(Arguments *args, char *name) {
     return NULL;
 }
 
-char *Argument_get_option_value(Arguments *args, char*name, int idx) {
+char *Arguments_get_option_value(Arguments *args, char*name, int idx) {
     Option *option = Arguments_get_option(args, name);
     if (!option) {
         return NULL;
@@ -85,6 +86,18 @@ char *Argument_get_option_value(Arguments *args, char*name, int idx) {
         return NULL;
     }
     return option->values[idx];
+}
+
+bool Arguments_has_option(Arguments *args, char *name) {
+    if (!name || !args->option_count) {
+        return false;
+    }
+    for (int i = 0; i<args->option_count; i++) {
+        if (strcmp(args->options[i]->name, name) == 0) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void Arguments_parse(Arguments *args, int argc, char **argv) {

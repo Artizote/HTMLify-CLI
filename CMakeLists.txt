@@ -7,7 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS YES)
 
 include_directories(include)
 
-file(GLOB SOURCES "src/*.c")
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.c")
 
 # Build type detaction
 #
