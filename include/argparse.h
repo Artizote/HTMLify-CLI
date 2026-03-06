@@ -53,6 +53,9 @@ char *Arguments_get_option_value(Arguments *arguments, char*name, int idx);
 // Check if `arguments` have option with name `name`
 bool Arguments_has_option(Arguments *arguments, char *name);
 
+// Check if the subcommand of `arguments` is `subcommand`
+bool Arguments_is_subcommand(Arguments *arguments, char *subcommand);
+
 // Parse command line arguments and update to the `arguments`
 void Arguments_parse(Arguments *arguments, int argc, char **argv);
 

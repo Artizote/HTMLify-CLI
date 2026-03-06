@@ -100,6 +100,16 @@ bool Arguments_has_option(Arguments *args, char *name) {
     return false;
 }
 
+bool Arguments_is_subcommand(Arguments *args, char *sub) {
+    if (!sub) {
+        return false;
+    }
+    if (!args->subcommand) {
+        return false;
+    }
+    return strcmp(args->subcommand, sub) == 0;
+}
+
 void Arguments_parse(Arguments *args, int argc, char **argv) {
 
     for (int i=0; i<argc; i++) {

@@ -14,10 +14,12 @@ int sub_help(const Arguments *args) {
 
     printf("Options:\n");
     printf("    -h, --help      Show help\n");
+    printf("    -v, --version   Show version\n");
     printf("\n");
 
     printf("Subcommands:\n");
     printf("    help            Show help\n");
+    printf("    version         Show version\n");
     printf("\n");
 
     return 0;
