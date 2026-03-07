@@ -1,0 +1,57 @@
+// Command Handler
+
+#include <stdio.h>
+#include "argparse.h"
+#include "subs.h"
+
+
+/*
+ * Command Handling flow
+ *
+ *  command subcommand --option values values...
+ *      - all args will be passed to the currusponding subcommand to handle
+ *      - if no subcommand match with the name, error message will be shown
+ *
+ *  command --option value value...
+ *      - will check for subcommand alises, like --help for help subcommand
+ *        if found, args will be passed to the currosponding subcommand to handle
+ *      - all args will be passed to the main subcommand to handle
+ *
+ *  command
+ *      - about subcommand will be triggered
+ *
+ *
+ * all subcommand are supposed to return status code, which will be returned by
+ * command_handler too, for the main function
+ * 
+ */
+ 
+
+int command_handler(Arguments *args) {
+    // If subcomand passed
+    if (args->subcommand) {
+        if (Arguments_is_subcommand(args, "help")) {
+            return sub_help(args);
+        }
+        if (Arguments_is_subcommand(args, "version")) {
+            return sub_version(args);
+        }
+        printf("%s: '%s' subcommand not found, try '%s help'.\n", args->command, args->subcommand, args->command);
+    // If options passed
+    } else if (args->option_count) {
+        if (Arguments_has_option(args, "h") || Arguments_has_option(args, "help")) {
+            return sub_help(args);
+        }
+        if (Arguments_has_option(args, "v") || Arguments_has_option(args, "version")) {
+            return sub_version(args);
+        }
+        // main command is not implmenetd
+        printf("%s: not a valid option, try `%s help'.\n", args->command, args->command);
+    // If only command is passed
+    } else {
+        // about command is not available,
+        return sub_help(args);
+    }
+
+    return 0;
+}
