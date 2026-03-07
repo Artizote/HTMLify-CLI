@@ -3,13 +3,16 @@
 #include <stdio.h>
 #include "argparse.h"
 #include "subs.h"
+#include "ui.h"
 
 int sub_help(const Arguments *args) {
-    printf("HTMLify CLI\n");
+    print_banner_with_version();
     printf("\n");
 
     printf("Usage:\n");
-    printf("    %s [<options>] <subcommand> [<args>...]\n", args->command);
+    printf("    %s [options]\n", args->command);
+    printf("    %s <subcommand> [options] [args...]\n", args->command);
+
     printf("\n");
 
     printf("Options:\n");
