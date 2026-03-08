@@ -12,13 +12,17 @@ Option *Option_new(void) {
     return option;
 }
 
-Option *Option_init(char *name) {
-    Option *option = Option_new();
+void Option_init(Option *option, const char *name) {
     option->name = strdup(name);
+}
+
+Option *Option_create(const char *name) {
+    Option *option = Option_new();
+    Option_init(option, name);
     return option;
 }
 
-void Option_add_value(Option *option, char *value) {
+void Option_add_value(Option *option, const char *value) {
     option->value_count++;
     option->values = reallocarray(option->values, option->value_count, sizeof(char*));
     option->values[option->value_count-1] = strdup(value);
@@ -41,10 +45,8 @@ Arguments *Arguments_new(void) {
     return arguments;
 }
 
-Arguments *Arguments_init(int argc, char **argv) {
-    Arguments *arguments = Arguments_new();
-    Arguments_parse(arguments, argc, argv);
-    return arguments;
+void Arguments_init(Arguments *args, int argc, char **argv) {
+    Arguments_parse(args, argc, argv);
 }
 
 void Arguments_add_option(Arguments *args, Option *option) {
@@ -55,14 +57,14 @@ void Arguments_add_option(Arguments *args, Option *option) {
 
 void Arguments_append_option_value(Arguments *args, char *value) {
     if (!args->option_count) {
-        Option *option = Option_init("");
+        Option *option = Option_create("");
         Arguments_add_option(args, option);
     }
 
     Option_add_value(args->options[args->option_count-1], value);
 }
 
-Option *Arguments_get_option(Arguments *args, char *name) {
+Option *Arguments_get_option(const Arguments *args, const char *name) {
     if (!name && args->option_count) { // the first option ""
         return args->options[0];
     }
@@ -74,7 +76,7 @@ Option *Arguments_get_option(Arguments *args, char *name) {
     return NULL;
 }
 
-char *Arguments_get_option_value(Arguments *args, char*name, int idx) {
+char *Arguments_get_option_value(const Arguments *args, const char *name, int idx) {
     Option *option = Arguments_get_option(args, name);
     if (!option) {
         return NULL;
@@ -88,7 +90,7 @@ char *Arguments_get_option_value(Arguments *args, char*name, int idx) {
     return option->values[idx];
 }
 
-bool Arguments_has_option(Arguments *args, char *name) {
+bool Arguments_has_option(const Arguments *args, const char *name) {
     if (!name || !args->option_count) {
         return false;
     }
@@ -100,7 +102,7 @@ bool Arguments_has_option(Arguments *args, char *name) {
     return false;
 }
 
-bool Arguments_is_subcommand(Arguments *args, char *sub) {
+bool Arguments_is_subcommand(const Arguments *args, const char *sub) {
     if (!sub) {
         return false;
     }
@@ -136,7 +138,7 @@ void Arguments_parse(Arguments *args, int argc, char **argv) {
                 buf[1] = '\0';
                 for (unsigned long j = 1; j<strlen(arg); j++) {
                     buf[0] = arg[j];
-                    Option *s_option = Option_init(buf);
+                    Option *s_option = Option_create(buf);
                     Arguments_add_option(args, s_option);
                 }
             }
@@ -148,13 +150,13 @@ void Arguments_parse(Arguments *args, int argc, char **argv) {
                 if (equal != NULL) {
                     equal[0] = '\0';
                     char *value = ++equal;
-                    Option *l_option = Option_init(los);
+                    Option *l_option = Option_create(los);
                     if (value) {
                         Option_add_value(l_option, value);
                     }
                     Arguments_add_option(args, l_option);
                 } else {
-                    Option *l_option = Option_init(&arg[2]);
+                    Option *l_option = Option_create(&arg[2]);
                     Arguments_add_option(args, l_option);
                 }
             }

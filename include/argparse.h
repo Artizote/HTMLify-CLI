@@ -22,11 +22,14 @@ typedef struct Arguments {
 // Create and return `Option` struct pointer
 Option *Option_new(void);
 
-// Initialize a new Option structure with the given name
-Option *Option_init(char *name);
+// Initialize a `option`
+void Option_init(Option *option, const char *name);
+
+// Create new `Option` with `name` and return
+Option *Option_create(const char *name);
 
 // Add `value` to `option`
-void Option_add_value(Option *option, char *value);
+void Option_add_value(Option *option, const char *value);
 
 // Free the `option` memory
 void Option_free(Option *option);
@@ -35,8 +38,8 @@ void Option_free(Option *option);
 // Cretae and return `Arguments` struct pointer
 Arguments *Arguments_new(void);
 
-// Initialize a new `Arguments` and return pointer
-Arguments *Arguments_init(int argc, char **argv);
+// Initialize `args` 
+void Arguments_init(Arguments *args, int argc, char **argv);
 
 // Add `option` to `arguments`
 void Arguments_add_option(Arguments *arguments, Option *option);
@@ -45,16 +48,16 @@ void Arguments_add_option(Arguments *arguments, Option *option);
 void Arguments_append_option_value(Arguments *arguments, char *value);
 
 // Get `option` from `arguments` by name
-Option *Arguments_get_option(Arguments *arguments, char *name);
+Option *Arguments_get_option(const Arguments *arguments, const char *name);
 
 // Get value on index `idx` of option with name `name` from `arguments`, return NULL if not found
-char *Arguments_get_option_value(Arguments *arguments, char*name, int idx);
+char *Arguments_get_option_value(const Arguments *arguments, const char*name, int idx);
 
 // Check if `arguments` have option with name `name`
-bool Arguments_has_option(Arguments *arguments, char *name);
+bool Arguments_has_option(const Arguments *arguments, const char *name);
 
 // Check if the subcommand of `arguments` is `subcommand`
-bool Arguments_is_subcommand(Arguments *arguments, char *subcommand);
+bool Arguments_is_subcommand(const Arguments *arguments, const char *subcommand);
 
 // Parse command line arguments and update to the `arguments`
 void Arguments_parse(Arguments *arguments, int argc, char **argv);
