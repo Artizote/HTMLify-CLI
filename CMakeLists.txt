@@ -9,6 +9,8 @@ include_directories(include)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.c")
 
+add_executable(htmlify ${SOURCES})
+
 # Build type detaction
 #
 # DEV for development
@@ -34,5 +36,29 @@ else()
     set(CMAKE_C_FLAGS "-Wall -Wextra -Wpedantic -O0 -g")
 endif()
 
-add_executable(htmlify ${SOURCES})
+
+# External dependincies
+include(FetchContent)
+
+# Curl Lib
+
+find_package(CURL REQUIRED)
+include_directories(${CURL_INCLUDE_DIR})
+target_link_libraries(htmlify PRIVATE CURL::libcurl)
+
+# cJSON
+
+FetchContent_Declare(
+    cjson
+    GIT_REPOSITORY https://github.com/DaveGamble/cJSON.git
+    GIT_TAG v1.7.19
+)
+
+set(ENABLE_CJSON_TEST OFF CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(cjson)
+
+target_include_directories(htmlify PRIVATE ${cjson_SOURCE_DIR})
+
+target_link_libraries(htmlify PRIVATE cjson)
 

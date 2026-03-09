@@ -15,4 +15,11 @@
     #define API_URL_BASE "https://api.htmlify.me"
 #endif
 
+//
+// API version
+//     /v1/foo/baar
+//
+
+#define DEFAULT_API_VERSION 1
+
 #endif
