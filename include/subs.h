@@ -10,3 +10,7 @@ int sub_help(const Arguments *args);
 // show the utility version
 int sub_version(const Arguments *args);
 
+// ShortLink subcommand
+// Create, and retrive shortlinks
+int sub_shortlink(const Arguments *args);
+
