@@ -1,0 +1,32 @@
+// Characters
+
+#pragma once
+
+/*
+* Unicode Charocters for art
+*
+*/
+
+#define CH_BLACK_RIGHT_POINTING_TRIANGLE "▶"
+
+#define CH_BLACK_SQUARE "■"
+
+#define CH_BOX_DRAWINGS_LIGHT_ARC_UP_AND_LEFT "╯"
+
+#define CH_BOX_DRAWINGS_LIGHT_ARC_UP_AND_RIGHT "╰"
+
+#define CH_BOX_DRAWINGS_LIGHT_DOWN_AND_HORIZONTAL "┬"
+
+#define CH_BOX_DRAWINGS_LIGHT_HORIZONTAL "─"
+
+#define CH_BOX_DRAWINGS_LIGHT_VERTICAL "│"
+
+#define CH_BOX_DRAWINGS_LIGHT_VERTICAL_AND_RIGHT "├"
+
+
+#define CH_FULL_BLOCK "█"
+
+#define CH_LOWER_HALF_BLOCK "▄"
+
+#define CH_UPPER_HALF_BLOCK "▀"
+
