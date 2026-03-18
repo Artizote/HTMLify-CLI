@@ -29,3 +29,18 @@ cJSON *curl_easy_perform_return_json(CURL *handle, CURLcode *res_code);
 // perform the curl request and populate `string` from the response
 string *curl_easy_perform_return_string(CURL *handle, CURLcode *res_code);
 
+// disabel styling for output
+void disable_styling(void);
+
+// enable styling for output
+void enable_styling(void);
+
+// for printing strings which are not the actuall output, but the styling
+int printf_style(const char *fmt, ...);
+
+// for printing strings which are output
+int printf_output(const char *fmt, ...);
+
+// for printing error messages
+int printf_error(const char *fmt, ...);
+
