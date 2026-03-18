@@ -1,5 +1,8 @@
 // Sub commands
 
+#pragma once
+
+
 #include "argparse.h"
 
 // Help subcommand
