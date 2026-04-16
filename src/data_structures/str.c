@@ -2,28 +2,28 @@
 
 #include <malloc.h>
 #include <string.h>
-#include "data_structures/string.h"
+#include "data_structures/str.h"
 
 
-string *string_new(void) {
-    string *str = malloc(sizeof(string));
+str *str_new(void) {
+    str *str = malloc(sizeof(struct str));
     return str;
 }
 
-void string_init(string *str) {
+void str_init(str *str) {
     str->value = malloc(1);
     str->value[0] = '\0';
     str->cap = 1;
 }
 
-string *string_create(const char *value) {
-    string *str = string_new();
-    string_init(str);
-    string_append(str, value);
+str *str_create(const char *value) {
+    str *str = str_new();
+    str_init(str);
+    str_append(str, value);
     return str;
 }
 
-void string_set(string *str, const char *chars) {
+void str_set(str *str, const char *chars) {
     size_t chars_len = strlen(chars);
     size_t require_cap = chars_len + str->cap + 1;
     if (require_cap > str->cap) {
@@ -33,11 +33,11 @@ void string_set(string *str, const char *chars) {
     strcpy(str->value, chars);
 }
 
-void string_unset(string *str) {
+void str_unset(str *str) {
     str->value[0] = '\0';
 }
 
-void string_append(string *str, const char *chars) {
+void str_append(str *str, const char *chars) {
     size_t chars_len = strlen(chars);
     size_t require_cap = chars_len + str->cap + 1;
     if (require_cap > str->cap) {
@@ -47,11 +47,11 @@ void string_append(string *str, const char *chars) {
     strcat(str->value, chars);
 }
 
-void string_append_string(string *str, const string *other) {
-    string_append(str, other->value); 
+void str_append_str(str *self, const str *other) {
+    str_append(self, other->value); 
 }
 
-void string_free(string *str) {
+void str_free(str *str) {
     free(str->value);
     free(str);
 }
