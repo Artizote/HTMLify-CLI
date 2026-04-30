@@ -26,7 +26,10 @@ typedef struct {
 } SubCommandMeta;
 
 // return Meta for subcommand
-SubCommandMeta *get_subcommand_meta(const char *name);
+SubCommandMeta *get_subcommand_meta(const char *subcommand);
+
+// return Meta for option of subcommand
+SubCommandOptionMeta *get_subcommand_option_meta(const char *subcommand, const char *option);
 
 // register subcommand meta
 void register_subcommand(SubCommandMeta meta, SubCommandOptionMeta options_meta[]);

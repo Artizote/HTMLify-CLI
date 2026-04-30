@@ -4,6 +4,7 @@
 #include <malloc.h>
 #include <stdbool.h>
 #include "argparse.h"
+#include "sub_meta.h"
 
 
 Option *Option_new(void) {
@@ -55,12 +56,24 @@ void Arguments_add_option(Arguments *args, Option *option) {
     args->options[args->option_count-1] = option;
 }
 
+void Arguments_add_value(Arguments *args, char *value) {
+    args->value_count++;
+    args->values = reallocarray(args->values, args->value_count, sizeof(char*));
+    args->values[args->value_count-1] = strdup(value);
+}
+
+void Arguments_add_option_value(Arguments *args, char *name, char *value) {
+    Option *option = Arguments_get_option(args, name);
+    if (!option) {
+        return;
+    }
+    Option_add_value(option, value);
+}
+
 void Arguments_append_option_value(Arguments *args, char *value) {
     if (!args->option_count) {
-        Option *option = Option_create("");
-        Arguments_add_option(args, option);
+        return;
     }
-
     Option_add_value(args->options[args->option_count-1], value);
 }
 
@@ -114,6 +127,9 @@ bool Arguments_is_subcommand(const Arguments *args, const char *sub) {
 
 void Arguments_parse(Arguments *args, int argc, char **argv) {
 
+    bool ignore_options = false;
+    SubCommandOptionMeta *option_meta = NULL;
+
     for (int i=0; i<argc; i++) {
         char *arg = argv[i];
 
@@ -129,6 +145,17 @@ void Arguments_parse(Arguments *args, int argc, char **argv) {
             continue;
         }
 
+        if (ignore_options) {
+            Arguments_add_value(args, arg);
+            continue;
+        }
+
+        // Ignore options flag
+        if (strcmp(arg, "--") == 0) {
+            ignore_options = true;
+            continue;
+        }
+
         // option
         if (arg[0] == '-') { // name
 
@@ -140,31 +167,50 @@ void Arguments_parse(Arguments *args, int argc, char **argv) {
                     buf[0] = arg[j];
                     Option *s_option = Option_create(buf);
                     Arguments_add_option(args, s_option);
+                    option_meta = get_subcommand_option_meta(args->subcommand, s_option->name);
                 }
             }
 
             // long option
             if (strncmp(arg, "--", 2) == 0 && strlen(arg) > 2) {
-                char *los = &arg[2];
-                char *equal = strchr(los, '=');
-                if (equal != NULL) {
-                    equal[0] = '\0';
-                    char *value = ++equal;
-                    Option *l_option = Option_create(los);
-                    if (value) {
-                        Option_add_value(l_option, value);
-                    }
-                    Arguments_add_option(args, l_option);
-                } else {
-                    Option *l_option = Option_create(&arg[2]);
-                    Arguments_add_option(args, l_option);
-                }
+                // removed the = checking and value asigning part, temporarly
+                Option *l_option = Option_create(&arg[2]);
+                Arguments_add_option(args, l_option);
+                option_meta = get_subcommand_option_meta(args->subcommand, l_option->name);
             }
 
-            // ignoring - and -- (maybe just for now)
+            // ignoring - (maybe just for now)
 
         } else { // value
-            Arguments_append_option_value(args, arg);
+            if (option_meta) {
+                Option *option = Arguments_get_option(args, option_meta->name);
+                switch (option_meta->type) {
+                    case ZERO_VALUE: {
+                        Arguments_add_value(args, arg);
+                        break;
+                    }
+                    case ONE_VALUE:
+                    case ZERO_OR_ONE_VALUE: {
+                        if (option->value_count < 1) {
+                            Option_add_value(option, arg);
+                        } else {
+                            Arguments_add_value(args, arg);
+                        }
+                        break;
+                    }
+                    case ONE_OR_MORE_VALUE:
+                    case ZERO_OR_MORE_VALUE: {
+                        Option_add_value(option, arg);
+                        break;
+                    }
+                }
+            } else {
+                if (args->option_count) {
+                    Arguments_append_option_value(args, arg);
+                } else {
+                    Arguments_add_value(args, arg);
+                }
+            }
         }
     }
 }
@@ -172,6 +218,9 @@ void Arguments_parse(Arguments *args, int argc, char **argv) {
 void Arguments_free(Arguments *args) {
     free(args->command);
     free(args->subcommand);
+    for (int i=0; i<args->value_count; i++) {
+        free(args->values[i]);
+    }
     if (args->options) {
         for (int i = 0; i<args->option_count; i++) {
             Option_free(args->options[i]);

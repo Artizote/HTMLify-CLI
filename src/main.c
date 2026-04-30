@@ -7,8 +7,10 @@
 
 #include "argparse.h"
 #include "command_handler.h"
+#include "sub_meta.h"
 
 int main(int argc, char **argv) {
+    register_subcommands();
     Arguments *args = Arguments_new();
     Arguments_init(args, argc, argv);
     int return_code = command_handler(args);

@@ -14,6 +14,8 @@ typedef struct Option {
 typedef struct Arguments {
     char *command;
     char *subcommand;
+    int value_count;
+    char **values;
     int option_count;
     Option **options;
 } Arguments;
@@ -39,10 +41,16 @@ void Option_free(Option *option);
 Arguments *Arguments_new(void);
 
 // Initialize `args` 
-void Arguments_init(Arguments *args, int argc, char **argv);
+void Arguments_init(Arguments *arguments, int argc, char **argv);
 
 // Add `option` to `arguments`
 void Arguments_add_option(Arguments *arguments, Option *option);
+
+// Add `value` in last of values of `arguments`
+void Arguments_add_value(Arguments *arguments, char *value);
+
+// Add `value` to the Option with name `name` in `arguments`
+void Arguments_add_option_value(Arguments *arguments, char *name, char *value);
 
 // Add `value` to last option of `arguments`, create unnamed option if found
 void Arguments_append_option_value(Arguments *arguments, char *value);

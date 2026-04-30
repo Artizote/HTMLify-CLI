@@ -12,9 +12,28 @@ static unsigned char SUB_COMMAND_META_COUNT = 0;
 static void(*sub_command_register_funcs[16])(void);
 
 SubCommandMeta *get_subcommand_meta(const char *name) {
+    if (!name) {
+        return NULL;
+    }
     for (int i=0; i<SUB_COMMAND_META_COUNT; i++) {
         if (strcmp(SUB_COMMAND_METAS[i]->name, name) == 0) {
             return SUB_COMMAND_METAS[i];
+        }
+    }
+    return NULL;
+}
+
+SubCommandOptionMeta *get_subcommand_option_meta(const char *subcommand, const char *option) {
+    SubCommandMeta *meta = get_subcommand_meta(subcommand);
+    if (!meta) {
+        return NULL;
+    }
+    for (int i=0; i<meta->options_count; i++) {
+        if (strcmp(meta->options[i].name, option) == 0) {
+            return &meta->options[i];
+        }
+        if (strcmp(meta->options[i].alias, option) == 0) {
+            return &meta->options[i];
         }
     }
     return NULL;
@@ -40,7 +59,9 @@ void register_subcommand(SubCommandMeta meta, SubCommandOptionMeta options_meta[
 
 void register_subcommands(void) {
     for (unsigned int i=0; i<sizeof(sub_command_register_funcs)/sizeof(sub_command_register_funcs[0]); i++) {
-        sub_command_register_funcs[i]();
+        if (sub_command_register_funcs[i] != NULL) {
+            sub_command_register_funcs[i]();
+        }
     }
 }
 
