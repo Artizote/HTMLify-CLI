@@ -3,7 +3,23 @@
 #include <stdio.h>
 #include "argparse.h"
 #include "subs.h"
+#include "sub_meta.h"
 #include "ui.h"
+
+
+// Meto Register Function
+
+void sub_register_help(void) {
+    register_subcommand(
+        (SubCommandMeta){
+            .name = "help",
+            .short_description = "Print help",
+            .options_count = 0,
+        },
+        NULL
+    );
+}
+
 
 int sub_help(const Arguments *args) {
     print_banner_with_version();

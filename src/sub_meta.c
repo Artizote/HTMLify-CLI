@@ -9,7 +9,12 @@
 
 static SubCommandMeta *SUB_COMMAND_METAS[16];
 static unsigned char SUB_COMMAND_META_COUNT = 0;
-static void(*sub_command_register_funcs[16])(void);
+static void(*sub_command_register_funcs[16])(void) = {
+    sub_register_help,
+    sub_register_version,
+    sub_register_shortlink,
+};
+
 
 SubCommandMeta *get_subcommand_meta(const char *name) {
     if (!name) {
