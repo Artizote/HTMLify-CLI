@@ -165,18 +165,28 @@ void Arguments_parse(Arguments *args, int argc, char **argv) {
                 buf[1] = '\0';
                 for (unsigned long j = 1; j<strlen(arg); j++) {
                     buf[0] = arg[j];
-                    Option *s_option = Option_create(buf);
+                    option_meta = get_subcommand_option_meta(args->subcommand, buf);
+                    Option *s_option;
+                    if (option_meta) {
+                        s_option = Option_create(option_meta->name);
+                    } else {
+                        s_option = Option_create(buf);
+                    }
                     Arguments_add_option(args, s_option);
-                    option_meta = get_subcommand_option_meta(args->subcommand, s_option->name);
                 }
             }
 
             // long option
             if (strncmp(arg, "--", 2) == 0 && strlen(arg) > 2) {
                 // removed the = checking and value asigning part, temporarly
-                Option *l_option = Option_create(&arg[2]);
+                option_meta = get_subcommand_option_meta(args->subcommand, &arg[2]);
+                Option *l_option;
+                if (option_meta) {
+                    l_option = Option_create(option_meta->name);
+                } else {
+                    l_option = Option_create(&arg[2]);
+                }
                 Arguments_add_option(args, l_option);
-                option_meta = get_subcommand_option_meta(args->subcommand, l_option->name);
             }
 
             // ignoring - (maybe just for now)
