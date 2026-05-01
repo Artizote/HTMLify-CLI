@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <malloc.h>
 #include "subs.h"
 #include "sub_meta.h"
 #include "argparse.h"
@@ -37,129 +38,107 @@ static inline void
 ;
 
 
+// Private stuff
+
+typedef struct query {
+    char *value;
+    char type; // u -> url, i -> id, s -> short
+} query;
+
+static int query_count = 0;
+static query *queries;
+
+static void add_query(char *value, char type);
+
+
 int sub_shortlink(const Arguments *args) {
     int ret_code = 0;
 
     printf_style(CH_BLACK_SQUARE " ShortLink\n");
 
-    if (!args->option_count) {
+    if (!args->value_count && !args->option_count) {
         printf_style(CH_BOX_DRAWINGS_LIGHT_ARC_UP_AND_RIGHT CH_BLACK_RIGHT_POINTING_TRIANGLE " ");
         printf_error("Provide URL to create shortlink or lookup by id or short\n");
         ret_code = 0;
         return ret_code;
     }
 
-    bool flag_new = Arguments_has_option(args, "n");
+    bool flag_new = Arguments_has_option(args, "new");
 
-    if (Arguments_has_option(args, "")) { // short the url(s)
-        Option *urls = Arguments_get_option(args, "");
-        for (int i = 0; i < urls->value_count; i++) {
+    int i;
 
-            // input line style
-            if (!(i == urls->value_count - 1)) {
-                print_input_line_style();
-            } else {
-                print_last_input_line_style();
-            }
-
-            char *url_to_short = urls->values[i];
-            printf_style("%s\n", url_to_short);
-            ShortLink *shortlink = ShortLink_create(url_to_short, flag_new);
-
-            // output line style
-            if (!(i == urls->value_count - 1)) {
-                print_output_line_style();
-            } else {
-                print_last_output_line_style();
-            }
-
-            if (!shortlink) {
-                printf_error("Unable to short this url. ");
-                printf_output("\n");
-                ret_code = 1;
-            } else {
-                printf_output("%s\n", shortlink->url);
-            }
-
-            ShortLink_free(shortlink);
+    // accumlating queries
+    for (i = 0; i < args->value_count; i++) {
+        add_query(args->values[i], 'u');
+    }
+    if (Arguments_has_option(args, "url")) {
+        Option *option = Arguments_get_option(args, "url");
+        for (i = 0; i < option->value_count; i++) {
+            add_query(option->values[i], 'u');
         }
-        return ret_code;
+    }
+    if (Arguments_has_option(args, "id")) {
+        Option *option = Arguments_get_option(args, "id");
+        for (i = 0; i < option->value_count; i++) {
+            add_query(option->values[i], 'i');
+        }
+    }
+    if (Arguments_has_option(args, "short")) {
+        Option *option = Arguments_get_option(args, "short");
+        for (i = 0; i < option->value_count; i++) {
+            add_query(option->values[i], 's');
+        }
     }
 
-    if (Arguments_has_option(args, "id")) { // lookup short url by id
-        Option *ids = Arguments_get_option(args, "id");
-        if (!ids->value_count) {
-            printf_style(CH_BOX_DRAWINGS_LIGHT_ARC_UP_AND_RIGHT CH_BLACK_RIGHT_POINTING_TRIANGLE " ");
-            printf_error("provide id(s) to lookup\n");
-            return ret_code;
+    // processing queries
+    for (i = 0; i < query_count; i++) {
+        query query = queries[i];
+        ShortLink *shortlink = NULL;
+        switch (query.type) {
+            case 'u':
+                shortlink = ShortLink_create(query.value, flag_new);
+                break;
+            case 'i': {
+                int id_to_lookup;
+                sscanf(query.value, "%d", &id_to_lookup);
+                shortlink = ShortLink_get_by_id(id_to_lookup);
+                break;
+            }
+            case 's': {
+                shortlink = ShortLink_get_by_short(query.value);
+                break;
+            }
         }
-        for (int i = 0; i < ids->value_count; i++) {
-            int id_to_lookup;
-            sscanf(ids->values[i], "%d", &id_to_lookup);
 
-            // input line style
-            if (!(i == ids->value_count - 1)) {
-                print_input_line_style();
-            } else {
-                print_last_input_line_style();
-            }
-
-            printf_style("%d\n", id_to_lookup);
-            ShortLink *shortlink = ShortLink_get_by_id(id_to_lookup);
-
-            // output line style
-            if (!(i == ids->value_count - 1)) {
-                print_output_line_style();
-            } else {
-                print_last_output_line_style();
-            }
-
-            if (!shortlink) {
-                printf_error("ShortLink not found with this id");
-                printf_output("\n");
-            } else {
-                printf_output("%s\n", shortlink->url);
-            }
-
-            ShortLink_free(shortlink);
+        // input line style
+        if (!(i == query_count - 1)) {
+            print_input_line_style();
+        } else {
+            print_last_input_line_style();
         }
-        return ret_code;
-    }
 
-    if (Arguments_has_option(args, "short")) { // lookup short urls by shorts
-        Option *shorts = Arguments_get_option(args, "short");
-        if (!shorts->value_count) {
-            fprintf(stderr, "provide short(s) to lookup\n");
-            return ret_code;
+        printf_style("%s\n", query.value);
+
+        // output line style
+        if (!(i == query_count - 1)) {
+            print_output_line_style();
+        } else {
+            print_last_output_line_style();
         }
-        for (int i = 0; i < shorts->value_count; i++) {
-            char *_short = shorts->values[i];
 
-            // input line style
-            if (!(i == shorts->value_count - 1)) {
-                print_input_line_style();
-            } else {
-                print_last_output_line_style();
+        if (!shortlink) {
+            switch (query.type) {
+                case 'u': printf_error("Unable to short this url."); break;
+                case 'i': printf_error("No ShortLink found with this id."); break;
+                case 's': printf_error("No ShortLink found with this short."); break;
             }
-
-            ShortLink *shortlink = ShortLink_get_by_short(_short);
-
-            // output line style
-            if (!(i == shorts->value_count - 1)) {
-                print_output_line_style();
-            } else {
-                print_last_output_line_style();
-            }
-
-            if (!shortlink) {
-                fprintf(stderr, "ShortLink not found with this short\n");
-            } else {
-                printf("%s\n", shortlink->url);
-            }
-
-            ShortLink_free(shortlink);
+            printf_output("\n");
+            ret_code = 1;
+        } else {
+            printf_output("%s\n", shortlink->url);
         }
-        return ret_code;
+
+        ShortLink_free(shortlink);
     }
 
     return ret_code;
@@ -200,5 +179,12 @@ static inline void print_last_output_line_style(void) {
         CH_BLACK_RIGHT_POINTING_TRIANGLE
         " "
     );
+}
+
+
+static void add_query(char *name, char type) {
+    query_count++;
+    queries = reallocarray(queries, query_count, sizeof(query));
+    queries[query_count-1] = (query){name, type};
 }
 
