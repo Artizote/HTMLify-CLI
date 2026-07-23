@@ -39,6 +39,9 @@ int command_handler(Arguments *args) {
         if (Arguments_is_subcommand(args, "shortlink")) {
             return sub_shortlink(args);
         }
+        if (Arguments_is_subcommand(args, "print-config")) {
+            return sub_print_config(args);
+        }
         printf("%s: '%s' subcommand not found, try '%s help'.\n", args->command, args->subcommand, args->command);
     // If options passed
     } else if (args->option_count) {

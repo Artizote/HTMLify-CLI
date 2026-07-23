@@ -17,11 +17,16 @@ int sub_version(const Arguments *args);
 // Create, and retrive shortlinks
 int sub_shortlink(const Arguments *args);
 
+// Print Config subcommand
+// Pirnts the confgi variables
+int sub_print_config(const Arguments *args);
+
 
 // SubCommand meta register functions
 void
 sub_register_help(void),
 sub_register_version(void),
-sub_register_shortlink(void)
+sub_register_shortlink(void),
+sub_register_print_config(void)
 ;
 
