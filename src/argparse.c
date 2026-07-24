@@ -228,8 +228,11 @@ void Arguments_parse(Arguments *args, int argc, char **argv) {
 void Arguments_free(Arguments *args) {
     free(args->command);
     free(args->subcommand);
-    for (int i=0; i<args->value_count; i++) {
-        free(args->values[i]);
+    if (args->values) {
+        for (int i=0; i<args->value_count; i++) {
+            free(args->values[i]);
+        }
+        free(args->values);
     }
     if (args->options) {
         for (int i = 0; i<args->option_count; i++) {
