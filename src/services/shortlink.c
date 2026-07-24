@@ -69,7 +69,7 @@ ShortLink *ShortLink_create(char *url, bool new) {
     if (!res_json) goto end;
     if (res_code != CURLE_OK) goto end;
 
-    int http_res_code;
+    long http_res_code;
     curl_easy_getinfo(handle, CURLINFO_HTTP_CODE, &http_res_code);
     if (200 > http_res_code || http_res_code > 299) goto end;
 
@@ -114,13 +114,13 @@ ShortLink *ShortLink_get_by_id(int id) {
 
     if (res_code != CURLE_OK) goto end;
 
-    int http_res_code;
+    long http_res_code;
     curl_easy_getinfo(handle, CURLINFO_HTTP_CODE, &http_res_code);
     if (200 > http_res_code || http_res_code > 299) goto end;
 
     shortlink = ShortLink_create_from_json(res_json);
 
-    end:
+end:
     cJSON_Delete(res_json);
     curl_easy_cleanup(handle);
     free(api_url);
@@ -139,7 +139,7 @@ ShortLink *ShortLink_get_by_short(const char *_short) {
     api_url = make_api_url("/shortlinks");
     append_string_to_url(api_url, "?short=");
     append_string_to_url(api_url, _short);
-    
+
     handle = curl_easy_init();
     if (!handle) goto end;
     curl_easy_setopt(handle, CURLOPT_URL, api_url);
@@ -149,7 +149,7 @@ ShortLink *ShortLink_get_by_short(const char *_short) {
 
     if (res_code != CURLE_OK) goto end;
 
-    int http_res_code;
+    long http_res_code;
     curl_easy_getinfo(handle, CURLINFO_HTTP_CODE, &http_res_code);
     if (200 > http_res_code || http_res_code > 299) goto end;
 
