@@ -55,6 +55,9 @@ void Arguments_add_option_value(Arguments *arguments, char *name, char *value);
 // Add `value` to last option of `arguments`, create unnamed option if found
 void Arguments_append_option_value(Arguments *arguments, char *value);
 
+// Get value on index `idx` in `arguments`, return NULL if not found
+char *Arguments_get_value(const Arguments *arguments, int idx);
+
 // Get `option` from `arguments` by name
 Option *Arguments_get_option(const Arguments *arguments, const char *name);
 
@@ -63,6 +66,9 @@ char *Arguments_get_option_value(const Arguments *arguments, const char*name, in
 
 // Check if `arguments` have option with name `name`
 bool Arguments_has_option(const Arguments *arguments, const char *name);
+
+// Check if `arguments` have `value`
+bool Arguments_has_value(const Arguments *arguments, const char *name);
 
 // Check if the subcommand of `arguments` is `subcommand`
 bool Arguments_is_subcommand(const Arguments *arguments, const char *subcommand);

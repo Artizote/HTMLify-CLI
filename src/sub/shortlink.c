@@ -18,10 +18,11 @@ void sub_register_shortlink(void) {
         (SubCommandMeta){
             .name = "shortlink",
             .short_description = "Create/Get ShortLinks",
+            .long_description = "Get ShortLinks with id or short, or create ShortLinks for URLs.",
             .options_count = 3
         }, (SubCommandOptionMeta[]){
-            { .name="id", .value="id(s)", .type=ONE_OR_MORE_VALUE },
-            { .name="short", .value="short(s)", .type=ONE_OR_MORE_VALUE },
+            { .name="id", .value="id", .type=ONE_OR_MORE_VALUE },
+            { .name="short", .value="short", .type=ONE_OR_MORE_VALUE },
             { .name="new", .alias="n", .type=ZERO_VALUE},
         }
     );

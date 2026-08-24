@@ -28,6 +28,12 @@ typedef struct {
 // return Meta for subcommand
 SubCommandMeta *get_subcommand_meta(const char *subcommand);
 
+// return all subcommand names
+char **get_subcommand_names(void);
+
+// return number of subcommand
+int get_subcommand_count(void);
+
 // return Meta for option of subcommand
 SubCommandOptionMeta *get_subcommand_option_meta(const char *subcommand, const char *option);
 

@@ -77,6 +77,13 @@ void Arguments_append_option_value(Arguments *args, char *value) {
     Option_add_value(args->options[args->option_count-1], value);
 }
 
+char *Arguments_get_value(const Arguments *args, int idx) {
+    if (idx >= args->value_count) {
+        return NULL;
+    }
+    return args->values[idx];
+}
+
 Option *Arguments_get_option(const Arguments *args, const char *name) {
     if (!name && args->option_count) { // the first option ""
         return args->options[0];
@@ -109,6 +116,15 @@ bool Arguments_has_option(const Arguments *args, const char *name) {
     }
     for (int i = 0; i<args->option_count; i++) {
         if (strcmp(args->options[i]->name, name) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Arguments_has_value(const Arguments *args, const char *name) {
+    for (int i = 0; i < args->value_count; i++) {
+        if (strcmp(args->values[i], name) == 0) {
             return true;
         }
     }

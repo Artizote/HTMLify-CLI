@@ -30,6 +30,18 @@ SubCommandMeta *get_subcommand_meta(const char *name) {
     return NULL;
 }
 
+char **get_subcommand_names(void) {
+    char **names = malloc(sizeof(char*)*SUB_COMMAND_META_COUNT);
+    for (int i=0; i<SUB_COMMAND_META_COUNT; i++) {
+        names[i] = strdup(SUB_COMMAND_METAS[i]->name);
+    }
+    return names;
+}
+
+int get_subcommand_count(void) {
+    return SUB_COMMAND_META_COUNT;
+}
+
 SubCommandOptionMeta *get_subcommand_option_meta(const char *subcommand, const char *option) {
     SubCommandMeta *meta = get_subcommand_meta(subcommand);
     if (!meta) {
