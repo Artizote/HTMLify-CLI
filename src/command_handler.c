@@ -13,12 +13,14 @@
  *      - if no subcommand match with the name, error message will be shown
  *
  *  command --option value value...
- *      - will check for subcommand alises, like --help for help subcommand
- *        if found, args will be passed to the currosponding subcommand to handle
- *      - all args will be passed to the main subcommand to handle
+ *      - will pass the arguments to `sub_main` to handle
+ *      - were it will check for currosponding subcommand for option, like --help for help
+ *        and fire that subcommand
+ *      - if no associtade subcommand found, error message will be shown
  *
  *  command
  *      - about subcommand will be triggered
+ *      - about subcommand is not available, so help subcommand is got triggered
  *
  *
  * all subcommand are supposed to return status code, which will be returned by
@@ -45,14 +47,7 @@ int command_handler(Arguments *args) {
         printf("%s: '%s' subcommand not found, try '%s help'.\n", args->command, args->subcommand, args->command);
     // If options passed
     } else if (args->option_count) {
-        if (Arguments_has_option(args, "h") || Arguments_has_option(args, "help")) {
-            return sub_help(args);
-        }
-        if (Arguments_has_option(args, "v") || Arguments_has_option(args, "version")) {
-            return sub_version(args);
-        }
-        // main command is not implmenetd
-        printf("%s: not a valid option, try `%s help'.\n", args->command, args->command);
+        sub_main(args);
     // If only command is passed
     } else {
         // about command is not available,

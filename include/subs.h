@@ -5,6 +5,10 @@
 
 #include "argparse.h"
 
+// Main subcommand
+// just the main command
+int sub_main(const Arguments *args);
+
 // Help subcommand
 // show help text
 int sub_help(const Arguments *args);
@@ -24,6 +28,7 @@ int sub_print_config(const Arguments *args);
 
 // SubCommand meta register functions
 void
+sub_register_main(void),
 sub_register_help(void),
 sub_register_version(void),
 sub_register_shortlink(void),
