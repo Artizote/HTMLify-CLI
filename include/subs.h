@@ -25,6 +25,10 @@ int sub_shortlink(const Arguments *args);
 // Pirnts the confgi variables
 int sub_print_config(const Arguments *args);
 
+// QR Code subcommand
+// Create and show ASCII art of QR Code
+int sub_qrcode(const Arguments *args);
+
 
 // SubCommand meta register functions
 void
@@ -32,6 +36,7 @@ sub_register_main(void),
 sub_register_help(void),
 sub_register_version(void),
 sub_register_shortlink(void),
-sub_register_print_config(void)
+sub_register_print_config(void),
+sub_register_qrcode(void)
 ;
 
