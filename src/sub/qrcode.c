@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "characters.h"
 #include "services/qrcode.h"
+#include "data_structures/color.h"
 
 
 // Meta Register Function
@@ -16,9 +17,11 @@ void sub_register_qrcode(void) {
             .name = "qrcode",
             .short_description = "Create and show QR Code",
             .long_description = "Create QR Code of givin data and show ASCII representations of it.",
-            .options_count = 0
-        },
-        NULL
+            .options_count = 2
+        }, (SubCommandOptionMeta[]){
+            { .name="fg", .alias="f", .value="RRGGBB", .type=ONE_VALUE },
+            { .name="bg", .alias="b", .value="RRGGBB", .type=ONE_VALUE },
+        }
     );
 }
 
@@ -35,10 +38,32 @@ int sub_qrcode(const Arguments *args) {
         return 1;
     }
 
-    char **qrcode_lines = QRCode_to_string_lines(qrcode);
-    int d = QRCode_get_dimention(qrcode);
-    int i, j, line_count = d/2+1;
+    bool has_fg_color, has_bg_color;
+    Color *fg_color, *bg_color;
+    char **qrcode_lines, *fg_color_hex, *bg_color_hex, *fg_color_escape_sequence, *bg_color_escape_sequence;
+    int d, i, j, line_count;
 
+    d = QRCode_get_dimention(qrcode);
+    line_count = (d/2) + 1;
+
+    has_fg_color = Arguments_has_option(args, "fg");
+    has_bg_color = Arguments_has_option(args, "bg");
+
+    if (has_fg_color) {
+        fg_color_hex = Arguments_get_option_value(args,"fg", 0);
+        fg_color = Color_create_from_hex(fg_color_hex);
+        fg_color_escape_sequence = Color_to_fg_color_escape_sequence(fg_color);
+    }
+
+    if (has_bg_color) {
+        bg_color_hex = Arguments_get_option_value(args,"bg", 0);
+        bg_color = Color_create_from_hex(bg_color_hex);
+        bg_color_escape_sequence = Color_to_bg_color_escape_sequence(bg_color);
+    }
+
+    qrcode_lines = QRCode_to_string_lines(qrcode);
+
+    // Printing
     printf_style(CH_BLACK_SQUARE " QR Code\n");
     for (i = 0; i < line_count; i++) {
         if (i == 0) {
@@ -50,7 +75,14 @@ int sub_qrcode(const Arguments *args) {
             printf_style("\n");
         }
         printf_style(CH_BOX_DRAWINGS_LIGHT_VERTICAL " ");
+
+        if (has_fg_color) printf_style(fg_color_escape_sequence);
+        if (has_bg_color) printf_style(bg_color_escape_sequence);
+
         printf_output("%s", qrcode_lines[i]);
+
+        if (has_fg_color || has_bg_color) printf_style("\033[0m");
+
         printf_style(" " CH_BOX_DRAWINGS_LIGHT_VERTICAL);
         printf_output("\n");
         if (i == line_count - 1) {
@@ -63,6 +95,14 @@ int sub_qrcode(const Arguments *args) {
         }
     }
 
+    if (has_fg_color) {
+        Color_free(fg_color);
+        free(fg_color_escape_sequence);
+    }
+    if (has_bg_color) {
+        Color_free(bg_color);
+        free(bg_color_escape_sequence);
+    }
     free(qrcode_lines);
     QRCode_free(qrcode);
 
