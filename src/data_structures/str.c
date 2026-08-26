@@ -25,7 +25,7 @@ str *str_create(const char *value) {
 
 void str_set(str *str, const char *chars) {
     size_t chars_len = strlen(chars);
-    size_t require_cap = chars_len + str->cap + 1;
+    size_t require_cap = chars_len + 1;
     if (require_cap > str->cap) {
         str->cap = require_cap + (str->cap * 1.5);
         str->value = realloc(str->value, str->cap);
@@ -39,12 +39,18 @@ void str_unset(str *str) {
 
 void str_append(str *str, const char *chars) {
     size_t chars_len = strlen(chars);
-    size_t require_cap = chars_len + str->cap + 1;
+    size_t str_len = strlen(str->value);
+    size_t require_cap = chars_len + str_len + 1;
     if (require_cap > str->cap) {
         str->cap = require_cap + (str->cap * 1.5);
         str->value = realloc(str->value, str->cap);
     }
     strcat(str->value, chars);
+}
+
+void str_append_char(str *str, char ch) {
+    char chars[2] = {ch, '\0'};
+    str_append(str, chars);
 }
 
 void str_append_str(str *self, const str *other) {

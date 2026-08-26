@@ -25,8 +25,11 @@ void str_set(str *str, const char *chars);
 // Unset `str` value
 void str_unset(str *str);
 
-// Append charectr array to `string`
+// Append charectr array to `str`
 void str_append(str *str, const char *chars);
+
+// Adppend character to `str`
+void str_append_char(str *str, char ch);
 
 // Append `other` string to `self` string
 void str_append_str(str *self, const str *other);

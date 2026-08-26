@@ -28,7 +28,20 @@ char *make_api_url_with_version(int v, const char *endpoint) {
 }
 
 void append_string_to_url(char *url, const char *string) {
-    strlcat(url, string, URL_MAX_LEN);
+    str *s = str_create("");
+    int l = strlen(string);
+
+    // escaping URL
+    for (int i = 0; i < l; i++) {
+        if (string[i] == ' ') {
+            str_append(s, "%20");
+        } else {
+            str_append_char(s, string[i]);
+        }
+    }
+
+    strlcat(url, s->value, URL_MAX_LEN);
+    str_free(s);
 }
 
 static size_t callback_curl_string_append(void *buffer, size_t size, size_t nmemb, void *str) {
