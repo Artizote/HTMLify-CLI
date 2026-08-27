@@ -43,3 +43,6 @@ void register_subcommand(SubCommandMeta meta, SubCommandOptionMeta options_meta[
 // Register all subcommands
 void register_subcommands(void);
 
+// Free all subcommand metas
+void clean_subcommand_registry(void);
+

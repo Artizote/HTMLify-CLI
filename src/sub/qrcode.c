@@ -103,6 +103,9 @@ int sub_qrcode(const Arguments *args) {
         Color_free(bg_color);
         free(bg_color_escape_sequence);
     }
+    for (i = 0; i < line_count; i++) {
+        free(qrcode_lines[i]);
+    }
     free(qrcode_lines);
     QRCode_free(qrcode);
 

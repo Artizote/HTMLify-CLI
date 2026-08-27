@@ -63,6 +63,7 @@ int sub_help(const Arguments *args) {
         lb; printf("Subcommands:\n");
         for (int i = 0; i < command_count; i++) {
             print_subcommand_line(get_subcommand_meta(command_names[i]), second_column_padding);
+            free(command_names[i]);
         }
         lb; printf("\n");
         free(command_names);

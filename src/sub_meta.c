@@ -85,3 +85,22 @@ void register_subcommands(void) {
     }
 }
 
+void clean_subcommand_registry(void) {
+    SubCommandMeta *scmeta;
+    SubCommandOptionMeta *scometa;
+    for (unsigned int i=0; i<SUB_COMMAND_META_COUNT; i++) {
+        scmeta = SUB_COMMAND_METAS[i];
+        free(scmeta->name);
+        if (scmeta->short_description) free(scmeta->short_description);
+        if (scmeta->long_description) free(scmeta->long_description);
+        for (int j = 0; j < scmeta->options_count; j++) {
+            scometa = &scmeta->options[j];
+            free((scometa->name));
+            free((scometa->alias));
+            free((scometa->value));
+        }
+        free(scmeta->options);
+        free(scmeta);
+    }
+}
+

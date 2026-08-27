@@ -15,5 +15,6 @@ int main(int argc, char **argv) {
     Arguments_init(args, argc, argv);
     int return_code = command_handler(args);
     Arguments_free(args);
+    clean_subcommand_registry();
     return return_code;
 }
