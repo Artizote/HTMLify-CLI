@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <data_structures/color.h>
+#include <models/color.h>
 
 
 Color *Color_new(void) {

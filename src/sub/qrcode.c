@@ -6,7 +6,7 @@
 #include "utils.h"
 #include "characters.h"
 #include "services/qrcode.h"
-#include "data_structures/color.h"
+#include "models/color.h"
 
 
 // Meta Register Function
