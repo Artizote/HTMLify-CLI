@@ -1,7 +1,7 @@
 // Utils
 
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -105,5 +105,9 @@ int printf_error(const char *fmt, ...) {
     fflush(stderr);
     va_end(args);
     return write_count;
+}
+
+int randint(int min, int max) {
+    return min + rand() % (max - min + 1);
 }
 

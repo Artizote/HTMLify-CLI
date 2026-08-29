@@ -29,6 +29,10 @@ int sub_print_config(const Arguments *args);
 // Create and show ASCII art of QR Code
 int sub_qrcode(const Arguments *args);
 
+// UwU subcommand
+// just do some uwu things
+int sub_uwu(const Arguments *args);
+
 
 // SubCommand meta register functions
 void

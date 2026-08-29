@@ -44,3 +44,6 @@ int printf_output(const char *fmt, ...);
 // for printing error messages
 int printf_error(const char *fmt, ...);
 
+// random int in range [a, b], including both end points.
+int randint(int min, int max);
+

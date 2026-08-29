@@ -47,6 +47,9 @@ int command_handler(Arguments *args) {
         if (Arguments_is_subcommand(args, "qrcode")) {
             return sub_qrcode(args);
         }
+        if (Arguments_is_subcommand(args, "uwu")) {
+            return sub_uwu(args);
+        }
         printf("%s: '%s' subcommand not found, try '%s help'.\n", args->command, args->subcommand, args->command);
     // If options passed
     } else if (args->option_count) {
