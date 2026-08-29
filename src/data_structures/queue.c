@@ -62,6 +62,10 @@ void Queue_shrink(Queue *queue) {
     queue->cap = new_cap;
 }
 
+int Queue_get_item_count(Queue *queue) {
+    return queue->used;
+}
+
 bool Queue_is_empty(Queue *queue) {
     return queue->used == 0;
 }

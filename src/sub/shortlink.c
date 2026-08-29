@@ -9,6 +9,7 @@
 #include "services/shortlink.h"
 #include "characters.h"
 #include "utils.h"
+#include "data_structures/queue.h"
 
 
 // Meta Register Function
@@ -41,15 +42,10 @@ static inline void
 
 // Private stuff
 
-typedef struct query {
+struct query {
     char *value;
     char type; // u -> url, i -> id, s -> short
-} query;
-
-static int query_count = 0;
-static query *queries;
-
-static void add_query(char *value, char type);
+};
 
 
 int sub_shortlink(const Arguments *args) {
@@ -65,70 +61,79 @@ int sub_shortlink(const Arguments *args) {
     }
 
     bool flag_new = Arguments_has_option(args, "new");
-
-    int i;
+    int i, query_size = sizeof(struct query);
+    Queue *queries = Queue_create();
+    struct query *query;
 
     // accumlating queries
     for (i = 0; i < args->value_count; i++) {
-        add_query(args->values[i], 'u');
+        query = malloc(query_size);
+        *query = (struct query){args->values[i], 'u'};
+        Queue_push(queries, query);
     }
     if (Arguments_has_option(args, "url")) {
         Option *option = Arguments_get_option(args, "url");
         for (i = 0; i < option->value_count; i++) {
-            add_query(option->values[i], 'u');
+            query = malloc(query_size);
+            *query = (struct query){option->values[i], 'u'};
+            Queue_push(queries, query);
         }
     }
     if (Arguments_has_option(args, "id")) {
         Option *option = Arguments_get_option(args, "id");
         for (i = 0; i < option->value_count; i++) {
-            add_query(option->values[i], 'i');
+            query = malloc(query_size);
+            *query = (struct query){option->values[i], 'i'};
+            Queue_push(queries, query);
         }
     }
     if (Arguments_has_option(args, "short")) {
         Option *option = Arguments_get_option(args, "short");
         for (i = 0; i < option->value_count; i++) {
-            add_query(option->values[i], 's');
+            query = malloc(query_size);
+            *query = (struct query){option->values[i], 's'};
+            Queue_push(queries, query);
         }
     }
 
     // processing queries
-    for (i = 0; i < query_count; i++) {
-        query query = queries[i];
+    while (!Queue_is_empty(queries)) {
+        query = (struct query*)Queue_get(queries);
         ShortLink *shortlink = NULL;
-        switch (query.type) {
+        switch (query->type) {
             case 'u':
-                shortlink = ShortLink_create(query.value, flag_new);
+                shortlink = ShortLink_create(query->value, flag_new);
                 break;
             case 'i': {
                 int id_to_lookup;
-                sscanf(query.value, "%d", &id_to_lookup);
+                sscanf(query->value, "%d", &id_to_lookup);
                 shortlink = ShortLink_get_by_id(id_to_lookup);
                 break;
             }
             case 's': {
-                shortlink = ShortLink_get_by_short(query.value);
+                shortlink = ShortLink_get_by_short(query->value);
                 break;
             }
         }
 
         // input line style
-        if (!(i == query_count - 1)) {
+        if (!(Queue_is_empty(queries))) {
             print_input_line_style();
         } else {
             print_last_input_line_style();
         }
 
-        printf_style("%s\n", query.value);
+        printf_style("%s\n", query->value);
 
         // output line style
-        if (!(i == query_count - 1)) {
+        if (!(Queue_is_empty(queries))) {
             print_output_line_style();
         } else {
             print_last_output_line_style();
         }
 
         if (!shortlink) {
-            switch (query.type) {
+            switch (query->type) {
                 case 'u': printf_error("Unable to short this url."); break;
                 case 'i': printf_error("No ShortLink found with this id."); break;
                 case 's': printf_error("No ShortLink found with this short."); break;
@@ -140,7 +145,10 @@ int sub_shortlink(const Arguments *args) {
         }
 
         ShortLink_free(shortlink);
+        free(query);
     }
+
+    Queue_free(queries);
 
     return ret_code;
 }
@@ -182,10 +190,4 @@ static inline void print_last_output_line_style(void) {
     );
 }
 
-
-static void add_query(char *name, char type) {
-    query_count++;
-    queries = reallocarray(queries, query_count, sizeof(query));
-    queries[query_count-1] = (query){name, type};
-}
 

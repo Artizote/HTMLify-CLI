@@ -43,6 +43,9 @@ void Queue_expand(Queue *queue);
 // Shrink the Queue capacity
 void Queue_shrink(Queue *queue);
 
+// Return number of items present in `queue`
+int Queue_get_item_count(Queue *queue);
+
 // Check if `queue` is empty
 bool Queue_is_empty(Queue *queue);
 
