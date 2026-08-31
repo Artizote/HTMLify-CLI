@@ -50,6 +50,9 @@ int command_handler(Arguments *args) {
         if (Arguments_is_subcommand(args, "uwu")) {
             return sub_uwu(args);
         }
+        if (Arguments_is_subcommand(args, "blob")) {
+            return sub_blob(args);
+        }
         printf("%s: '%s' subcommand not found, try '%s help'.\n", args->command, args->subcommand, args->command);
     // If options passed
     } else if (args->option_count) {

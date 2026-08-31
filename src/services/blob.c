@@ -96,8 +96,24 @@ end:
 }
 
 bool Blob_download(Blob *blob, const char *filepath, Progress *progress) {
-    FILE *file = fopen(filepath, "w");
-    return Blob_write(blob, file, progress);
+    FILE *file;
+
+    if (!strlen(filepath)) {
+        file = stdout;
+    } else {
+        file = fopen(filepath, "wb");
+    }
+    if (!file) return false;
+
+    bool success = Blob_write(blob, file, progress);
+
+    if (file == stdout) {
+        fflush(file);
+    } else {
+        fclose(file);
+    }
+
+    return success;
 }
 
 void Blob_free(Blob *blob) {

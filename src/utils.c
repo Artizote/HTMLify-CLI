@@ -111,3 +111,18 @@ int randint(int min, int max) {
     return min + rand() % (max - min + 1);
 }
 
+char *formate_size(size_t size) {
+    char units[5][3] = {"B", "KB", "MB", "GB", "TB"};
+    int degree = 0;
+    double bytes = (double)size;
+    for (; degree <= 5; degree++) {
+        if (bytes < 1024) {
+            break;
+        }
+        bytes /= 1024;
+    }
+    char *formated = malloc(9);
+    snprintf(formated, 9, "%.2f %s", bytes, units[degree]);
+    return formated;
+}
+

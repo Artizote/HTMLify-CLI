@@ -47,3 +47,6 @@ int printf_error(const char *fmt, ...);
 // random int in range [a, b], including both end points.
 int randint(int min, int max);
 
+// return string with size in formated string
+char *formate_size(size_t size);
+

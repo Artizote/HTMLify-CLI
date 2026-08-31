@@ -33,6 +33,10 @@ int sub_qrcode(const Arguments *args);
 // just do some uwu things
 int sub_uwu(const Arguments *args);
 
+// Blob subcommand
+// Download blobs
+int sub_blob(const Arguments *args);
+
 
 // SubCommand meta register functions
 void
@@ -41,6 +45,7 @@ sub_register_help(void),
 sub_register_version(void),
 sub_register_shortlink(void),
 sub_register_print_config(void),
-sub_register_qrcode(void)
+sub_register_qrcode(void),
+sub_register_blob(void)
 ;
 

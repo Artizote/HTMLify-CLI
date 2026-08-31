@@ -16,6 +16,7 @@ static void(*sub_command_register_funcs[16])(void) = {
     sub_register_shortlink,
     sub_register_print_config,
     sub_register_qrcode,
+    sub_register_blob,
 };
 
 

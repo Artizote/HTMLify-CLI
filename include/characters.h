@@ -23,6 +23,7 @@
 #define CH_BOX_DRAWINGS_LIGHT_VERTICAL_AND_LEFT       "┤"
 #define CH_BOX_DRAWINGS_LIGHT_VERTICAL_AND_RIGHT      "├"
 #define CH_BRAILLE_PATTERN_DOTS_1234                  "⠏"
+#define CH_BRAILLE_PATTERN_DOTS_12345678              "⣿"
 #define CH_BRAILLE_PATTERN_DOTS_1237                  "⡇"
 #define CH_BRAILLE_PATTERN_DOTS_1245                  "⠛"
 #define CH_BRAILLE_PATTERN_DOTS_1456                  "⠹"
@@ -41,4 +42,6 @@
 #define CH_LOWER_HALF_BLOCK                           "▄"
 #define CH_SPACE                                      " "
 #define CH_UPPER_HALF_BLOCK                           "▀"
+#define CH_Z_NOTATION_LEFT_BINDING_BRACKET            "⦉"
+#define CH_Z_NOTATION_RIGHT_BINDING_BRACKET           "⦊"
 

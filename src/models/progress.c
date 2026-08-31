@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+#include <math.h>
 #include "models/progress.h"
 #include "characters.h"
 #include "models/color.h"
@@ -54,6 +55,7 @@ char *Progress_to_string(Progress *progress, char *string) {
     int pbw = 20; // Progress Bar Width
     int ppc = 100 / pbw; // percent per cell
     int i, j, poc;
+    bool completed = Progress_is_completed(progress);
     float percent = Progress_to_percent(progress);
     int elasped_time = Progress_elasped_time(progress);
     int estimated_time = Progress_estimated_time(progress);
@@ -82,13 +84,17 @@ char *Progress_to_string(Progress *progress, char *string) {
 
     // Spinner
     temps = Color_to_fg_color_escape_sequence(&color_green_light);
-    o += sprintf(&ps[o], " %s%s\033[0m ", temps, spinner_chars[time(NULL)%8]);
+    if (completed) {
+        o += sprintf(&ps[0], " %s%s\033[0m ", temps, CH_BRAILLE_PATTERN_DOTS_12345678);
+    } else {
+        o += sprintf(&ps[o], " %s%s\033[0m ", temps, spinner_chars[time(NULL)%8]);
+    }
     free(temps);
 
     // Title
     o += sprintf(&ps[o], "%s", progress->title);
 
-    o += sprintf(&ps[o], " ⦉");
+    o += sprintf(&ps[o], CH_SPACE CH_Z_NOTATION_LEFT_BINDING_BRACKET);
 
     // Progress bar
     for (i = 0; i < pbw; i++) {
@@ -105,12 +111,12 @@ char *Progress_to_string(Progress *progress, char *string) {
         free(temps);
     }
 
-    o += sprintf(&ps[o], "⦊ ");
+    o += sprintf(&ps[o], CH_Z_NOTATION_RIGHT_BINDING_BRACKET CH_SPACE);
 
     // Percent
     o += sprintf(&ps[o], "%*.2f %%", 6, percent);
 
-    o += sprintf(&ps[o], " " CH_BOX_DRAWINGS_LIGHT_VERTICAL " ");
+    o += sprintf(&ps[o], CH_SPACE CH_BOX_DRAWINGS_LIGHT_VERTICAL CH_SPACE);
     
     // Elasped and Estimeted time
     temps = Color_to_fg_color_escape_sequence(&color_gray);
@@ -153,6 +159,9 @@ int Progress_estimated_time(Progress *progress) {
     float left_p = 100.0 - done_p;
     float seconds_per_percent = Progress_elasped_time(progress) / done_p;
     float estimated_time = left_p * seconds_per_percent;
+    if (isinff(estimated_time)) {
+        return 99 * 60 + 59;
+    }
     return estimated_time;
 }
 
