@@ -1,5 +1,7 @@
 // Color Data Structure
 
+#pragma once
+
 #include <stdint.h>
 
 
