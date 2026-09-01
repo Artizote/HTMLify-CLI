@@ -4,6 +4,7 @@ project(HTMLify-CLI C)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS YES)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 
 include_directories(include)
 
