@@ -106,6 +106,10 @@ char *Progress_to_string(Progress *progress, char *string) {
         }
 
         tempu = bar_chars[poc];
+        if (!progress->target) {
+            tempu = (elasped_time - i) % ppc ? CH_BLACK_SQUARE : " ";
+        }
+
         temps = Color_to_fg_color_escape_sequence(&color_green);
         o += sprintf(&ps[o], "%s%s\033[0m", temps, tempu);
         free(temps);
@@ -114,17 +118,35 @@ char *Progress_to_string(Progress *progress, char *string) {
     o += sprintf(&ps[o], CH_Z_NOTATION_RIGHT_BINDING_BRACKET CH_SPACE);
 
     // Percent
-    o += sprintf(&ps[o], "%*.2f %%", 6, percent);
+    if (progress->target) {
+        o += sprintf(&ps[o], "%*.2f %%", 6, percent);
+    } else {
+        o += sprintf(
+            &ps[o], " %c%c%c%c%c %%", 
+            (elasped_time + 2) % ppc ? '?' : '.',
+            (elasped_time + 1) % ppc ? '?' : '.',
+            (elasped_time + 0) % ppc ? '?' : '.',
+            (elasped_time - 1) % ppc ? '?' : '.',
+            (elasped_time - 2) % ppc ? '?' : '.'
+        );
+    }
 
     o += sprintf(&ps[o], CH_SPACE CH_BOX_DRAWINGS_LIGHT_VERTICAL CH_SPACE);
     
     // Elasped and Estimeted time
     temps = Color_to_fg_color_escape_sequence(&color_gray);
     o += sprintf(
-        &ps[o], "%02d%s:%s%02d - ETA %02d%s:%s%02d",
-        elasped_time / 60,   (time(NULL)%2) ? temps : "", "\033[0m", elasped_time % 60,
-        estimated_time / 60, (time(NULL)%2) ? temps : "", "\033[0m", estimated_time % 60
+        &ps[o], "%02d%s:%s%02d",
+        elasped_time / 60,   (time(NULL)%2) ? temps : "", "\033[0m", elasped_time % 60
     );
+    if (progress->target) {
+        o += sprintf(
+            &ps[o], " - ETA %02d%s:%s%02d",
+            estimated_time / 60, (time(NULL)%2) ? temps : "", "\033[0m", estimated_time % 60
+        );
+    } else {
+        o += sprintf(&ps[o], "%s - ETA 00:00%s", temps, "\033[0m");
+    }
     free(temps);
 
 
