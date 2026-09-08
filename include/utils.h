@@ -50,3 +50,6 @@ int randint(int min, int max);
 // return string with size in formated string
 char *formate_size(size_t size);
 
+// return last part (after /) from filepath
+char *filename_from_filepath(const char* filepath);
+

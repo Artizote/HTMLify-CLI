@@ -126,3 +126,10 @@ char *formate_size(size_t size) {
     return formated;
 }
 
+char *filename_from_filepath(const char* filepath) {
+    size_t i = strlen(filepath);
+    for (; i > 0 && filepath[i-1] != '/'; i--);
+    char *filename = strdup(&filepath[i]);
+    return filename;
+}
+
